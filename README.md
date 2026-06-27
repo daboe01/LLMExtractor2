@@ -68,7 +68,7 @@ export PATCHBAY_URL="http://10.210.21.201:3036"
 Start the Mojolicious development server (defaults to port 3000):
 
 ```bash
-perl app.pl daemon -l http://localhost:3000
+morbo ./backend.pl  --listen "http://*:3000"
 ```
 
 Open `http://localhost:3000/Frontend/index.html` in your web browser to run the application.
