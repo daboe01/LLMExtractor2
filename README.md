@@ -38,6 +38,8 @@ This application utilizes a decoupled client-server architecture:
 *   **Auto-Correction Validation Loop**: The backend analyzes extraction structures against your visual tree schema and triggers correction feedback runs if structural or type validation mismatches are detected.
 *   **JSON Import/Export**: Directly view, copy, or paste your layout via the Schema JSON panel to share schema configurations easily.
 *   **Tabular CSV Export**: Export all resolved paths, extracted values, and source text coordinates as a structured CSV spreadsheet directly from the client.
+  
+<img width="1282" height="1093" alt="Bildschirmfoto 2026-06-23 um 15 05 09" src="https://github.com/user-attachments/assets/12925fb7-de3c-4b57-a162-914a5412159f" />
 
 ---
 
