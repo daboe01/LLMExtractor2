@@ -53,7 +53,7 @@ Clone the repository and install the Perl dependencies:
 
 ```bash
 # Install Mojolicious and dependencies
-cpanm Mojolicious::Lite Mojo::UserAgent Encode File::Spec Mojo::JSON
+cpanm Mojolicious::Lite Encode File::Spec
 ```
 
 Set up your environment variables for your chosen LLM endpoint and dense-retrieval vector database:
