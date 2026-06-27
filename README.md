@@ -12,7 +12,7 @@ This application utilizes a decoupled client-server architecture:
 ┌──────────────────────────────────────┐          ┌───────────────────────────┐
 │         Objective-J Frontend         │          │    Mojolicious Backend    │
 │  ┌────────────────────────────────┐  │  JSON    │  ┌─────────────────────┐  │
-│  │ CPOutlineView (Visual Schema)   │  ├─────────►│  │ Chunking & Merging  │  │
+│  │ CPOutlineView (Visual Schema)  │  ├─────────►│  │ Chunking & Merging  │  │
 │  └────────────────────────────────┘  │  Request │  └──────────┬──────────┘  │
 │  ┌────────────────────────────────┐  │          │             ▼             │
 │  │ CPTextView (Text Highlights)   │  │◄─────────┤  ┌─────────────────────┐  │
