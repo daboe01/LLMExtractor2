@@ -1,12 +1,10 @@
 # Visual Schema-Driven Chunked Data Extractor
 
-An interactive, visual schema editor and text-extraction application. This project combines a **Cappuccino (Objective-J)** web-based desktop application frontend with a **Mojolicious (Perl)** backend to extract structured, nested data from unstructured text using Large Language Models (LLMs) with automated self-correction.
+An interactive, visual schema editor and text-extraction application. This project pairs a web-based **Cappuccino (Objective-J)** desktop frontend with a **Mojolicious (Perl)** backend to extract structured, nested data from unstructured text using Large Language Models (LLMs) and automatically resolve terminology via dense retrieval.
 
 ---
 
-## 🏗️ System Architecture
-
-This application utilizes a decoupled client-server architecture:
+## System Architecture
 
 ```
 ┌──────────────────────────────────────┐          ┌───────────────────────────┐
@@ -20,90 +18,67 @@ This application utilizes a decoupled client-server architecture:
 │  ┌────────────────────────────────┐  │  Response│  │  & Self-Correction  │  │
 │  │ CPTableView & CSV Export       │  │          │  └──────────┬──────────┘  │
 │  └────────────────────────────────┘  │          │             ▼             │
-└──────────────────────────────────────┘          │       Target LLM API      │
-                                                  │ (vLLM, Ollama, OpenAI)    │
+└──────────────────────────────────────┘          │      Dense Retrieval      │
+                                                  │    Vector Search Lookup   │
+                                                  │             ▼             │
+                                                  │       Target LLM API      │
                                                   └───────────────────────────┘
 ```
-
-*   **Frontend (Objective-J / Cappuccino)**: Provides a desktop-class GUI in the browser. It features a recursive tree controller linked to a hierarchical schema editor, text highlighting based on character offset indices, dynamic JSON schema import/export, and tabular data visualization with instant CSV downloads.
-*   **Backend (Perl / Mojolicious::Lite)**: Manages sliding character-bounded document chunking to fit context windows, constructs strict metadata-wrapped schemas, queries OpenAI-compatible endpoints or local Ollama instances, validates extraction structures dynamically, and performs corrective prompt retries on validation mismatches.
+<img width="1079" height="783" alt="Bildschirmfoto 2026-06-27 um 11 27 06" src="https://github.com/user-attachments/assets/d18570b8-c591-4cd2-aae5-8d8b178e801f" />
 
 ---
 
-## ✨ Features
+## Features
 
-*   **Graphical Schema Tree Editor**: Create, modify, nest, and delete fields dynamically using a visual outline view (`string`, `number`, `array`, `object`).
-*   **Dynamic Document Chunking**: Automatically processes long inputs by separating text into character-bounded blocks to respect LLM token limits.
-*   **Source Text Highlights**: Visual color bands map the extracted fields directly to the precise verbatim offset matches inside the document editor.
-*   **Auto-Correction Validation Loop**: The backend analyzes extraction structures against your visual tree schema and triggers correction feedback runs if structural or type validation mismatches are detected.
-*   **JSON Import/Export**: Directly view, copy, or paste your layout via the Schema JSON panel to share schema configurations easily.
-*   **Tabular CSV Export**: Export all resolved paths, extracted values, and source text coordinates as a structured CSV spreadsheet directly from the client.
-  
-<img width="1282" height="1093" alt="Bildschirmfoto 2026-06-23 um 15 05 09" src="https://github.com/user-attachments/assets/12925fb7-de3c-4b57-a162-914a5412159f" />
+*   **Graphical Schema Tree Editor**: Create, modify, and nest schema fields dynamically (supporting `string`, `number`, `array`, and `object` types).
+*   **Dense-Retrieval Integration**: Seamlessly maps raw text extractions to canonical database entries. Extracted strings are resolved using semantic dense vector searches (`top_k=1`) against user-selected catalog systems to retrieve unified identifiers.
+*   **Automatic Chunking & Merging**: Automatically splits long inputs to match context window limitations and merges the results into a single structured output.
+*   **Source Text Highlighting**: Color-coded visualization mapping extracted fields back to their exact coordinates in the source text.
+*   **Self-Correction Loop**: Validates JSON outputs against the user-defined schema and performs corrective retry prompts if type or structure mismatches occur.
+*   **Data Export**: Instant tabular viewing and export of resolved paths and values as a CSV spreadsheet.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Prerequisites
 
-*   **Perl 5.20+** with cpanminus (or similar package manager).
-*   An active LLM connection (e.g., an OpenAI-compatible API gateway or a local **Ollama** server running `gemma4:e4b-mlx` or equivalent).
+*   **Perl 5.20+**
+*   An active LLM connection (OpenAI, local Ollama, or any OpenAI-compatible gateway)
+*   An endpoint hosting embedding indices for semantic vector search (such as the Patchbay API gateway)
 
-### 2. Backend Installation & Run
+### 2. Setup
 
 Clone the repository and install the Perl dependencies:
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
-
 # Install Mojolicious and dependencies
-cpanm Mojolicious::Lite Mojo::UserAgent Encode File::Spec Mojo::JSON
+cpanm Mojolicious::Lite Encode File::Spec
 ```
 
-Set up your environment variables to point to your LLM provider. For example, to use a standard vLLM or OpenAI-compatible endpoint:
+Set up your environment variables for your chosen LLM endpoint and dense-retrieval vector database:
 
 ```bash
-export VLLM_API_KEY="your-api-key-here"
+export VLLM_API_KEY="your-api-key"
 export VLLM_ENDPOINT="https://your-llm-gateway.example.com/v1/chat/completions"
 export VLLM_MODEL="gpt-oss-120b"
+export PATCHBAY_URL="http://10.210.21.201:3036"
 ```
 
-Start the Mojolicious development backend server:
+Start the Mojolicious development server (defaults to port 3000):
 
 ```bash
-perl app.pl daemon -l http://localhost:3000
+morbo ./backend.pl  --listen "http://*:3000"
 ```
 
-*Note: If you choose the "ollama" option in the UI, the backend will automatically redirect requests to your local instance at `http://localhost:11434/v1/chat/completions` using the default model `gemma4:e4b-mlx` unless configured otherwise.*
-
-### 3. Frontend Installation
-
-To run the Objective-J frontend application, make sure your web server can serve the project's root folder where the main entry file resides.
-
-For a fast development environment, you can run a simple HTTP server in the root of the project directory where `index.html` and the Objective-J app configuration are stored:
-
-```bash
-# Using Python's built-in HTTP server:
-python3 -m http.server 8080
-```
-
-Open `http://localhost:8080` in your web browser to access the graphical editor interface.
+Open `http://localhost:3000/Frontend/index.html` in your web browser to run the application.
 
 ---
 
-## 🛠️ Usage Workflow
+## Usage Workflow
 
-1.  **Paste Document Text**: Paste your target document (unstructured clinical reports, contracts, notes, etc.) into the left-hand text editor pane.
-2.  **Define Schema**: Use the **Graphical Schema Tree Editor** on the right to build out your desired JSON structure, specifying field keys, value types, and nested parameters.
-3.  **Refine Master Prompt**: Update the instruction prompt box to direct the extraction process focused on your schema criteria.
-4.  **Extract Chunks**: Select the target model from the dropdown list and click **Extract Structured Chunks**. The application will communicate with the backend to chunk, extract, validate, and highlight text ranges.
-5.  **Review & Export**: Use the interactive extraction results grid to click and verify highlighted source text, modify rows if necessary, and click **Export Results as CSV** to download a spreadsheet. Or open the **Schema JSON** panel to copy your schema layout configuration for future use.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+1.  **Input Text**: Paste unstructured text into the left pane.
+2.  **Configure Schema**: Define keys and structural hierarchy using the Schema Tree Editor on the right.
+3.  **Enable Dense Retrieval**: Assign specific fields to lookup targets (vector collections) to resolve raw extracted text to standard, coded database equivalents.
+4.  **Extract**: Click **Extract Structured Chunks**. The application chunks the text, runs extraction, validates consistency, queries the dense-retrieval API, and returns highlighted results.
+5.  **Export**: Click **Export Results as CSV** to download a spreadsheet of the resolved extraction records.
