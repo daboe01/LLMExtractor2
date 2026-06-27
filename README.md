@@ -47,7 +47,7 @@ An interactive, visual schema editor and text-extraction application. This proje
 *   An active LLM connection (OpenAI, local Ollama, or any OpenAI-compatible gateway)
 *   An endpoint hosting embedding indices for semantic vector search (such as the Patchbay API gateway)
 
-### 2. Backend Setup
+### 2. Setup
 
 Clone the repository and install the Perl dependencies:
 
@@ -71,16 +71,7 @@ Start the Mojolicious development server (defaults to port 3000):
 perl app.pl daemon -l http://localhost:3000
 ```
 
-### 3. Frontend Setup
-
-Serve the root project directory containing `index.html` using a simple web server:
-
-```bash
-# Python 3 fallback example:
-python3 -m http.server 8080
-```
-
-Open `http://localhost:8080` in your web browser to run the application.
+Open `http://localhost:3000/Frontend/index.html` in your web browser to run the application.
 
 ---
 
