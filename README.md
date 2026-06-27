@@ -24,6 +24,7 @@ An interactive, visual schema editor and text-extraction application. This proje
                                                   │       Target LLM API      │
                                                   └───────────────────────────┘
 ```
+<img width="1079" height="783" alt="Bildschirmfoto 2026-06-27 um 11 27 06" src="https://github.com/user-attachments/assets/d18570b8-c591-4cd2-aae5-8d8b178e801f" />
 
 ---
 
